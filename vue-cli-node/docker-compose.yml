@@ -1,0 +1,21 @@
+version: "3.5"
+
+services:
+  vue-cli:
+    container_name: vue-cli-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./pos/:/pos
+    working_dir: /pos
+    command: bash -c "npm run serve --host=127.0.0.1"
+    stdin_open: true
+    tty: true
+    ports:
+      - "8080:8080"
+
+networks:
+  default:
+    external:
+      name: broccoli_server

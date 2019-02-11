@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+
+    php:
+        container_name: php
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ./www:/code
+            - ./php72/:/usr/local/etc/php/
+        working_dir: /code
+        command: bash -c "composer install --prefer-source --no-interaction && php ./vendor/bin/phpunit"
+        stdin_open: true
+        tty: true
+        depends_on:
+          - mongodb
+
+    mongodb:
+        image: mongo:latest
+        ports:
+            - 27017:27017
+        volumes:
+            - ./db/mongodb:/data/db
+        networks:
+            - dev_network
+    
+    memcached:
+      image: memcached:alpine
+      container_name: memcached_container
+      ports:
+            - 11211:11211
+      networks:
+            - dev_network      
+            
+    redis:
+        container_name: redis_container
+        image: redis:latest
+        ports:
+            - "6379:6379"
+        networks:
+            - dev_network
+            
+networks:
+  dev_network:
